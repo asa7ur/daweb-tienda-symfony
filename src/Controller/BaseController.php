@@ -10,6 +10,7 @@ use App\Entity\Categoria;
 use App\Entity\Producto;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+// Clase controladora para ROLE_USER
 #[IsGranted('ROLE_USER')]
 final class BaseController extends AbstractController
 {
