@@ -1,9 +1,36 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Categorías{% endblock %}
+
 {% block contenido %}
-    {% for categoria in categorias %}
-        <p>
-            <a href="{{ path('productos', {'categoria': categoria.getId()}) }}">{{ categoria.getNombre() }}</a>
-        </p>
-    {% endfor %}
+<div class="container">
+    <h1 class="mb-4 text-center">Categorías disponibles</h1>
+
+    {% if categorias is empty %}
+        <div class="alert alert-warning text-center">
+            No hay categorías disponibles por el momento.
+        </div>
+    {% else %}
+        <div class="row g-4">
+            {% for categoria in categorias %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">{{ categoria.getNombre() }}</h5>
+                            {% if categoria.getDescripcion() is defined %}
+                                <p class="card-text text-muted">
+                                    {{ categoria.getDescripcion()|slice(0, 100) ~ '...' }}
+                                </p>
+                            {% endif %}
+                            <a href="{{ path('app_productos', {'categoria': categoria.getId()}) }}"
+                               class="btn btn-primary mt-3">
+                                Ver productos
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

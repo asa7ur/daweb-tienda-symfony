@@ -1,5 +1,5 @@
 {% block header %}
     <h3>Bienvenido {{ app.user.login }}</h3>
     <a href="{{ path('app_categorias') }}">Listado de Categorías</a>
-    <a href="{{ path('logout') }}">Log Out</a>
+    <a href="{{ path('app_logout') }}">Log Out</a>
 {% endblock %}
