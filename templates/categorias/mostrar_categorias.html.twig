@@ -17,12 +17,7 @@
                     <div class="card h-100 shadow-sm border-0">
                         <div class="card-body text-center">
                             <h5 class="card-title">{{ categoria.getNombre() }}</h5>
-                            {% if categoria.getDescripcion() is defined %}
-                                <p class="card-text text-muted">
-                                    {{ categoria.getDescripcion()|slice(0, 100) ~ '...' }}
-                                </p>
-                            {% endif %}
-                            <a href="{{ path('app_productos', {'categoria': categoria.getId()}) }}"
+                            <a href="{{ path('productos', {'categoria': categoria.getId()}) }}"
                                class="btn btn-primary mt-3">
                                 Ver productos
                             </a>

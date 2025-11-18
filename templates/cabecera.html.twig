@@ -1,5 +1,51 @@
 {% block header %}
-    <h3>Bienvenido {{ app.user.login }}</h3>
-    <a href="{{ path('app_categorias') }}">Listado de Categorías</a>
-    <a href="{{ path('app_logout') }}">Log Out</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container">
+        <!-- Logo o título del sitio -->
+        <a class="navbar-brand fw-bold" href="{{ path('categorias') }}">
+            🛍️ Perfume Shop
+        </a>
+
+        <!-- Botón hamburguesa para móviles -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarContent" aria-controls="navbarContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Contenido del navbar -->
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link {% if app.request.attributes.get('_route') == 'categorias' %}active{% endif %}"
+                       href="{{ path('categorias') }}">
+                        Categorías
+                    </a>
+                </li>
+                {# Agrega aquí más enlaces si lo necesitas #}
+            </ul>
+
+            <ul class="navbar-nav ms-auto">
+                {% if app.user %}
+                    <li class="nav-item d-flex align-items-center me-3 text-white">
+                        👋 Bienvenido, <strong class="ms-1">{{ app.user.login }}</strong>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light btn-sm rounded-pill px-3"
+                           href="{{ path('logout') }}">
+                            Cerrar sesión
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="btn btn-light btn-sm rounded-pill px-3"
+                           href="{{ path('login') }}">
+                            Iniciar sesión
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
 {% endblock %}
