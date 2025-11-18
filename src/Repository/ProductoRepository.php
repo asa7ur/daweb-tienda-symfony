@@ -15,6 +15,18 @@ class ProductoRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Producto::class);
     }
+    
+    public function findProductsByIds(Array $productos_ids): array{
+        // Transforma el array de ids en un array de objetos
+        
+        $em = $this->getEntityManager();
+        foreach ($productos_ids as $producto_id){
+            $producto= $em->getRepository(Producto::class)->find($producto_id);   
+            $productos[] = $producto;
+        }
+        
+        return $productos;
+    }
 
     //    /**
     //     * @return Producto[] Returns an array of Producto objects

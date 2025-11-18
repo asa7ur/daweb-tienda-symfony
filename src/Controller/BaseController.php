@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Categoria;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpFoundation\Request ;
 
 // Clase controladora para ROLE_USER
 #[IsGranted('ROLE_USER')]
@@ -40,38 +41,13 @@ final class BaseController extends AbstractController
     }
     
     #[Route('/anadir', name: 'anadir')]
-    public function anadir_producto(
-        int $id,
-        EntityManagerInterface $em,
-        Request $request
-    ): RedirectResponse {
-        $producto = $em->getRepository(Producto::class)->find($id);
-
-        /* if (!$producto) {
-            throw $this->createNotFoundException('Producto no encontrado');
-        }
-
-        // Obtenemos la cesta actual desde la sesión
-        $session = $request->getSession();
-        $cesta = $session->get('cesta', []);
-
-        // Añadimos el producto o incrementamos cantidad si ya existe
-        if (isset($cesta[$id])) {
-            $cesta[$id]['cantidad']++;
-        } else {
-            $cesta[$id] = [
-                'id' => $producto->getId(),
-                'nombre' => $producto->getNombre(),
-                'precio' => $producto->getPrecio(),
-                'cantidad' => 1,
-            ];
-        }
-
-        // Guardamos de nuevo en sesión
-        $session->set('cesta', $cesta);
-
-        // Redirigimos a la ruta 'cesta'
-        return $this->redirectToRoute('cesta');
-        */
+    public function anadir_producto( EntityManagerInterface $em, Request $request, CestaCompra $cesta){
+        // recogemos los datos de la entrada
+        $productos_ids = $request->request->get("productos_ids");
+        $unidades = $request->request->get("unidades");
+        $productos = $em->getRepository(Producto::class)->findProductosByIds($productos_ids);
+        $cesta->cargar_articulos($productos, $unidades);
+        
+        return $this->redirectToRoute('mostrar_cesta');
     }
 }
