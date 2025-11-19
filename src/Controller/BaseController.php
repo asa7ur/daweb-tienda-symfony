@@ -45,8 +45,10 @@ final class BaseController extends AbstractController
         // recogemos los datos de la entrada
         $productos_ids = $request->request->get("productos_ids");
         $unidades = $request->request->get("unidades");
+        
         $productos = $em->getRepository(Producto::class)->findProductosByIds($productos_ids);
-        $cesta->cargar_articulos($productos, $unidades);
+        // Llamamos a carga_productos para añadir a la cesta los productos junto con sus unidades
+        $cesta->cargar_productos($productos, $unidades);
         
         return $this->redirectToRoute('mostrar_cesta');
     }

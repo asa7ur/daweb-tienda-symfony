@@ -16,13 +16,13 @@ class ProductoRepository extends ServiceEntityRepository
         parent::__construct($registry, Producto::class);
     }
     
-    public function findProductsByIds(Array $productos_ids): array{
+    public function findProductsByIds(array $productos_ids): array{
         // Transforma el array de ids en un array de objetos
-        
+        $productos = [];
         $em = $this->getEntityManager();
+        
         foreach ($productos_ids as $producto_id){
-            $producto= $em->getRepository(Producto::class)->find($producto_id);   
-            $productos[] = $producto;
+            $productos[] = $em->getRepository(Producto::class)->find($producto_id);   
         }
         
         return $productos;
