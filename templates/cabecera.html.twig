@@ -1,6 +1,7 @@
 {% block header %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <div class="container">
+
         <!-- Logo o título del sitio -->
         <a class="navbar-brand fw-bold" href="{{ path('categorias') }}">
             🛍️ Perfume Shop
@@ -22,14 +23,22 @@
                         Categorías
                     </a>
                 </li>
-                {# Agrega aquí más enlaces si lo necesitas #}
             </ul>
 
             <ul class="navbar-nav ms-auto">
+                
                 {% if app.user %}
                     <li class="nav-item d-flex align-items-center me-3 text-white">
                         👋 Bienvenido, <strong class="ms-1">{{ app.user.login }}</strong>
                     </li>
+                    <li class="nav-item me-3">
+                        <a class="btn btn-warning btn-sm rounded-pill px-3
+                            {% if app.request.attributes.get('_route') == 'cesta' %}active{% endif %}"
+                           href="{{ path('cesta') }}">
+                            🛒 Cesta
+                        </a>
+                    </li>
+
                     <li class="nav-item">
                         <a class="btn btn-outline-light btn-sm rounded-pill px-3"
                            href="{{ path('logout') }}">
@@ -46,6 +55,7 @@
                 {% endif %}
             </ul>
         </div>
+
     </div>
 </nav>
 {% endblock %}
