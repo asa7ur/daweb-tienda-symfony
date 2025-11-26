@@ -99,7 +99,7 @@ class Producto
         return $this;
     }
 
-    public function getCategoria(): ?self
+    public function getCategoria(): ?Categoria
     {
         return $this->categoria;
     }

@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Categoria;
+use App\Entity\Producto;
+use App\Service\CestaCompra;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request ;
 
@@ -29,9 +31,7 @@ final class BaseController extends AbstractController
     {        
         // Obtenemos el objeto categoria correspondiente al id pasado como parametro
         $categoriaObj = $em->getRepository(Categoria::class)->find($categoria);
-        if (!$categoriaObj) {
-            throw $this->createNotFoundException('Categoría no encontrada');
-        }
+
         // Obtenemos los productos de esa categoria
         $productos = $categoriaObj->getProductos();
 
@@ -43,13 +43,33 @@ final class BaseController extends AbstractController
     #[Route('/anadir', name: 'anadir')]
     public function anadir_producto( EntityManagerInterface $em, Request $request, CestaCompra $cesta){
         // recogemos los datos de la entrada
-        $productos_ids = $request->request->get("productos_ids");
-        $unidades = $request->request->get("unidades");
+        $productos_ids = $request->request->all("productos_ids");
+        $unidades = $request->request->all("unidades");
         
-        $productos = $em->getRepository(Producto::class)->findProductosByIds($productos_ids);
+        // Obtenemos un array de objetos de producto a partir de sus ids
+        $productos = $em->getRepository(Producto::class)->findBy(['id' => $productos_ids]);
+        
         // Llamamos a carga_productos para añadir a la cesta los productos junto con sus unidades
         $cesta->cargar_productos($productos, $unidades);
         
-        return $this->redirectToRoute('mostrar_cesta');
+        // $objetos_producto = array_values($productos);
+        // return $this->redirectToRoute('productos', ['categoria'=>$objetos_producto[0]->getCategoria()]);
+        
+        // Tomamos el primer producto para obtener la categoría
+        $primerProducto = array_values($productos)[0];
+        $categoriaId = $primerProducto->getCategoria()->getId();
+
+        // Redirigimos a la misma página de productos de esa categoría
+        return $this->redirectToRoute('productos', [
+            'categoria' => $categoriaId
+        ]);
+    }
+    
+    #[Route('/cesta', name: 'cesta')]
+    public function mostrar_cesta(CestaCompra $cesta){
+        return $this->render('cesta/mostrar_cesta.html.twig', [
+            'productos' => $cesta->get_productos(),
+            'unidades' => $cesta->get_unidades()
+        ]);
     }
 }
