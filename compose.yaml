@@ -10,6 +10,8 @@ services:
     networks:
       - web_network
     restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   # Define el servicio de BD
   db:
     image: postgres:16-alpine

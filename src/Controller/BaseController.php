@@ -41,7 +41,7 @@ final class BaseController extends AbstractController
     }
     
     #[Route('/anadir', name: 'anadir')]
-    public function anadir_producto( EntityManagerInterface $em, Request $request, CestaCompra $cesta){
+    public function anadir_productos( EntityManagerInterface $em, Request $request, CestaCompra $cesta){
         // recogemos los datos de la entrada
         $productos_ids = $request->request->all("productos_ids");
         $unidades = $request->request->all("unidades");
@@ -52,11 +52,10 @@ final class BaseController extends AbstractController
         // Llamamos a carga_productos para añadir a la cesta los productos junto con sus unidades
         $cesta->cargar_productos($productos, $unidades);
         
-        // $objetos_producto = array_values($productos);
-        // return $this->redirectToRoute('productos', ['categoria'=>$objetos_producto[0]->getCategoria()]);
-        
         // Tomamos el primer producto para obtener la categoría
         $primerProducto = array_values($productos)[0];
+        
+        //Obtenemos el ID de la categoria del primer producto
         $categoriaId = $primerProducto->getCategoria()->getId();
 
         // Redirigimos a la misma página de productos de esa categoría
@@ -71,5 +70,15 @@ final class BaseController extends AbstractController
             'productos' => $cesta->get_productos(),
             'unidades' => $cesta->get_unidades()
         ]);
+    }
+    
+    #[Route('/eliminar', name: 'eliminar')]
+    public function eliminar(Request $request, CestaCompra $cesta){
+        $producto_id = $request->request->get("producto_id");
+        $unidades = $request->request->get("unidades");
+        
+        $cesta->eliminar_producto($producto_id, $unidades);
+        
+        return $this->redirectToRoute('cesta');
     }
 }

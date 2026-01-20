@@ -11,35 +11,68 @@
             Tu cesta está vacía.
         </div>
     {% else %}
-        <div class="row g-4">
+        
+        {# 1. Inicializamos la variable total a 0 #}
+        {% set total = 0 %}
 
-            {% for codigo, producto in productos %}
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Producto</th>
+                        <th scope="col" class="text-end">Precio Unitario</th>
+                        <th scope="col" class="text-center">Unidades</th>
+                        <th scope="col" class="text-end">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for codigo, producto in productos %}
+                        
+                        {# Calculamos el subtotal de esta fila #}
+                        {% set subtotal = producto.getPrecio() * unidades[codigo] %}
+                        
+                        {# 2. Sumamos el subtotal al total acumulado #}
+                        {% set total = total + subtotal %}
 
-                        <div class="card-body text-center">
-                            <h5 class="card-title">{{ producto.getNombre() }}</h5>
+                        <tr>
+                            <td>
+                                <span class="fw-bold">{{ producto.getNombre() }}</span>
+                            </td>
+                            <td class="text-end">
+                                {{ producto.getPrecio() }} €
+                            </td>
+                            <td class="text-center">
+                                {{ unidades[codigo] }}
+                            </td>
+                            <td class="text-end">
+                                {{ subtotal }} €
+                            </td>
+                            <td>
+                                <form method="POST" action=""
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                
+                {# 3. Pie de tabla con el Total Final #}
+                <tfoot class="table-dark">
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">TOTAL A PAGAR:</td>
+                        <td class="text-end fw-bold fs-5">{{ total }} €</td>
+                    </tr>
+                </tfoot>
 
-                            <p class="card-text">
-                                <strong>Precio:</strong> {{ producto.getPrecio() }} € <br>
-                                <strong>Unidades:</strong> {{ unidades[codigo] }}
-                            </p>
-
-                            <p class="card-text fw-bold">
-                                Subtotal: {{ producto.getPrecio() * unidades[codigo] }} €
-                            </p>
-                        </div>
-
-                    </div>
-                </div>
-            {% endfor %}
-
+            </table>
         </div>
 
-        <div class="mt-4 text-center">
-            <a href="{{ path('categorias') }}" class="btn btn-secondary">
+        <div class="mt-4 d-flex justify-content-between align-items-center">
+            
                 Seguir comprando
-            </a>
+            
+            
+            <button class="btn btn-success">
+                Tramitar Pedido
+            </button>
         </div>
     {% endif %}
 </div>

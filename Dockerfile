@@ -29,6 +29,8 @@ ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 # Copiamos nuestra aplicación a la carpeta de trabajo del contenedor
 COPY . /var/www/html/
 COPY web/apache2.conf /etc/apache2/apache2.conf
+# Copiamos configuración de Xdebug
+COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 # Establecemos la carpeta de trabajo
 WORKDIR /var/www/html/
@@ -44,7 +46,7 @@ RUN curl -sS https://getcomposer.org/installer | php \
 
 
 # Exponemos el puerto 80 para el tráfico HTTP
-EXPOSE 80
+EXPOSE 80 9003
 
 # Iniciamos el servidor Apache en primer plano
 CMD ["apache2-foreground"]
