@@ -4,88 +4,88 @@ namespace App\Service;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CestaCompra{
+class CestaCompra
+{
     protected $requestStack;
-    
     protected $productos;
-    
     protected $unidades;
-    
-    public function __construct(RequestStack $requestStack){
+
+    public function __construct(RequestStack $requestStack)
+    {
         $this->requestStack = $requestStack;
     }
-    
-    // recuperamos el array de prodcutos y unidades de la sesión
-    protected function carga_cesta(){
-        // Recuperar la sesión
+
+    protected function carga_cesta(): void
+    {
         $sesion = $this->requestStack->getSession();
-        
-        //Si hay productos en la sesión, los cargamos en los productos del objeto cesta
         $this->productos = $sesion->get('productos', []);
-        $this->unidades  = $sesion->get('unidades', []);
+        $this->unidades = $sesion->get('unidades', []);
     }
-    
-    // Recibe como parametros los productos y las unidades del formulario
-    public function cargar_productos($productos, $unidades){
+
+    public function cargar_productos($productos, $unidades): void
+    {
         $this->carga_cesta();
-        
-        
-        for($i=0; $i < count($productos); $i++){
-            
-            if($unidades[$i] != 0){
-                // carga un producto a la sesión
+        for ($i = 0; $i < count($productos); $i++) {
+            if ($unidades[$i] != 0) {
                 $this->cargar_producto($productos[$i], $unidades[$i]);
             }
         }
-        
-        $this->guardar_cesta();
+        $this->guardar_cesta(); //
     }
-    
-    // recibe como parametro un objeto Producto con sus unidades
-    public function cargar_producto($producto, $unidades){        
-        // ahora podemos utilizar los productos y las unidades
-        // cojo el código para buscar en la cesta
+
+    public function cargar_producto($producto, $unidades): void
+    {
         $codigo = $producto->getCodigo();
-        
-        if(!array_key_exists($codigo, $this->productos)){
+        if (!array_key_exists($codigo, $this->productos)) {
             $this->productos[$codigo] = $producto;
             $this->unidades[$codigo] = 0;
         }
-        
         $this->unidades[$codigo] += $unidades;
     }
-    
-    protected function guardar_cesta(){
+
+    public function actualizar_unidades($codigo, $cantidad): void
+    {
+        $this->carga_cesta();
+        if (array_key_exists($codigo, $this->productos)) {
+            if ($cantidad <= 0) {
+                unset($this->productos[$codigo]);
+                unset($this->unidades[$codigo]);
+            } else {
+                $this->unidades[$codigo] = $cantidad;
+            }
+            $this->guardar_cesta();
+        }
+    }
+
+    protected function guardar_cesta(): void
+    {
         $sesion = $this->requestStack->getSession();
-        
         $sesion->set('productos', $this->productos);
         $sesion->set('unidades', $this->unidades);
     }
-    
-    public function get_productos(){
-        $this->carga_cesta(); // cargamos los productos de la sesión
+
+    public function get_productos()
+    {
+        $this->carga_cesta();
         return $this->productos;
     }
 
-    public function get_unidades(){
-        $this->carga_cesta(); // cargamos las unidades de la sesión
+    public function get_unidades()
+    {
+        $this->carga_cesta();
         return $this->unidades;
     }
-    
-    public function eliminar_producto($codigo_producto, $unidades){
-    $this->carga_cesta();
-    
-    if (array_key_exists($codigo_producto, $this->productos)) {
-        $this->unidades[$codigo_producto] -= $unidades;
 
-        if ($this->unidades[$codigo_producto] <= 0) {
-            unset($this->unidades[$codigo_producto]);
-            unset($this->productos[$codigo_producto]);
+    public function eliminar_producto($codigo_producto, $unidades): void
+    {
+        $this->carga_cesta();
+        if (array_key_exists($codigo_producto, $this->productos)) {
+            $this->unidades[$codigo_producto] -= $unidades;
+            if ($this->unidades[$codigo_producto] <= 0) {
+                unset($this->unidades[$codigo_producto]);
+                unset($this->productos[$codigo_producto]);
+            }
+            $this->guardar_cesta();
         }
-
-        $this->guardar_cesta();
     }
-}
-
-    
 }

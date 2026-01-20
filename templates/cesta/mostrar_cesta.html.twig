@@ -1,79 +1,92 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Cesta de la compra{% endblock %}
+{% block title %}Mi Cesta{% endblock %}
 
 {% block contenido %}
-<div class="container">
-    <h1 class="mb-4 text-center">Tu cesta</h1>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    {% if productos is empty %}
-        <div class="alert alert-warning text-center">
-            Tu cesta está vacía.
-        </div>
-    {% else %}
-        
-        {# 1. Inicializamos la variable total a 0 #}
-        {% set total = 0 %}
+    <div class="container py-5">
+        <h1 class="mb-4 text-center"><i class="bi bi-cart-fill text-primary"></i> Mi Cesta</h1>
 
-        <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th scope="col">Producto</th>
-                        <th scope="col" class="text-end">Precio Unitario</th>
-                        <th scope="col" class="text-center">Unidades</th>
-                        <th scope="col" class="text-end">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for codigo, producto in productos %}
-                        
-                        {# Calculamos el subtotal de esta fila #}
-                        {% set subtotal = producto.getPrecio() * unidades[codigo] %}
-                        
-                        {# 2. Sumamos el subtotal al total acumulado #}
-                        {% set total = total + subtotal %}
+        {% if productos is empty %}
+            <div class="alert alert-light border text-center py-5 shadow-sm">
+                <p class="lead">Tu cesta está vacía actualmente.</p>
+                <a href="{{ path('categorias') }}" class="btn btn-primary px-4">Volver a Categorías</a>
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4">Producto</th>
+                                    <th class="text-center">Cant.</th>
+                                    <th class="text-end">Precio</th>
+                                    <th class="text-end">Subtotal</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% set total = 0 %}
+                                {% for codigo, producto in productos %}
+                                    {% set subtotal = producto.getPrecio() * unidades[codigo] %}
+                                    {% set total = total + subtotal %}
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="fw-bold">{{ producto.getNombre() }}</div>
+                                            <small class="text-muted">Cod: {{ codigo }}</small>
+                                        </td>
+                                        <td style="width: 140px;">
+                                            <form action="{{ path('actualizar_cantidad') }}" method="POST"
+                                                  class="input-group input-group-sm">
+                                                <input type="hidden" name="producto_id" value="{{ codigo }}">
+                                                <input type="number" name="cantidad" value="{{ unidades[codigo] }}"
+                                                       class="form-control text-center" min="1"
+                                                       aria-label="Cambiar cantidad de {{ producto.getNombre() }}">
+                                                <button class="btn btn-outline-primary" type="submit"
+                                                        title="Actualizar">
+                                                    <i class="bi bi-arrow-repeat"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                        <td class="text-end">{{ producto.getPrecio()|number_format(2, ',', '.') }}€
+                                        </td>
+                                        <td class="text-end fw-bold">{{ subtotal|number_format(2, ',', '.') }} €</td>
+                                        <td class="text-center">
+                                            <form method="POST" action="{{ path('eliminar') }}"
+                                                  onsubmit="return confirm('¿Eliminar producto?')">
+                                                <input type="hidden" name="producto_id" value="{{ codigo }}">
+                                                <input type="hidden" name="unidades" value="{{ unidades[codigo] }}">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                    <i class="bi bi-trash"></i> Eliminar
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-                        <tr>
-                            <td>
-                                <span class="fw-bold">{{ producto.getNombre() }}</span>
-                            </td>
-                            <td class="text-end">
-                                {{ producto.getPrecio() }} €
-                            </td>
-                            <td class="text-center">
-                                {{ unidades[codigo] }}
-                            </td>
-                            <td class="text-end">
-                                {{ subtotal }} €
-                            </td>
-                            <td>
-                                <form method="POST" action=""
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-                
-                {# 3. Pie de tabla con el Total Final #}
-                <tfoot class="table-dark">
-                    <tr>
-                        <td colspan="3" class="text-end fw-bold">TOTAL A PAGAR:</td>
-                        <td class="text-end fw-bold fs-5">{{ total }} €</td>
-                    </tr>
-                </tfoot>
-
-            </table>
-        </div>
-
-        <div class="mt-4 d-flex justify-content-between align-items-center">
-            
-                Seguir comprando
-            
-            
-            <button class="btn btn-success">
-                Tramitar Pedido
-            </button>
-        </div>
-    {% endif %}
-</div>
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0 bg-dark text-white">
+                        <div class="card-body py-4">
+                            <h5 class="card-title mb-4 border-bottom pb-2">Resumen de Pago</h5>
+                            <div class="d-flex justify-content-between mb-4 h4">
+                                <span>Total:</span>
+                                <span class="text-info">{{ total|number_format(2, ',', '.') }} €</span>
+                            </div>
+                            <button class="btn btn-success w-100 btn-lg mb-3 fw-bold">FINALIZAR PEDIDO</button>
+                            <a href="{{ path('categorias') }}" class="btn btn-outline-light w-100 btn-sm">Continuar
+                                comprando</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
