@@ -12,11 +12,13 @@ class CestaCompra
 
     public function __construct(RequestStack $requestStack)
     {
+        // Inyecta el stack de peticiones para acceder a la sesión
         $this->requestStack = $requestStack;
     }
 
     protected function carga_cesta(): void
     {
+        // Recupera los datos de la cesta almacenados en la sesión actual
         $sesion = $this->requestStack->getSession();
         $this->productos = $sesion->get('productos', []);
         $this->unidades = $sesion->get('unidades', []);
@@ -24,17 +26,19 @@ class CestaCompra
 
     public function cargar_productos($productos, $unidades): void
     {
+        // Recorre y añade una lista de productos a la cesta
         $this->carga_cesta();
         for ($i = 0; $i < count($productos); $i++) {
             if ($unidades[$i] != 0) {
                 $this->cargar_producto($productos[$i], $unidades[$i]);
             }
         }
-        $this->guardar_cesta(); //
+        $this->guardar_cesta();
     }
 
     public function cargar_producto($producto, $unidades): void
     {
+        // Añade un producto individual o incrementa sus unidades si ya existe
         $codigo = $producto->getCodigo();
         if (!array_key_exists($codigo, $this->productos)) {
             $this->productos[$codigo] = $producto;
@@ -45,6 +49,7 @@ class CestaCompra
 
     public function actualizar_unidades($codigo, $cantidad): void
     {
+        // Cambia la cantidad exacta o elimina el producto si la cantidad es <= 0
         $this->carga_cesta();
         if (array_key_exists($codigo, $this->productos)) {
             if ($cantidad <= 0) {
@@ -59,6 +64,7 @@ class CestaCompra
 
     protected function guardar_cesta(): void
     {
+        // Persiste los cambios de la cesta en la sesión
         $sesion = $this->requestStack->getSession();
         $sesion->set('productos', $this->productos);
         $sesion->set('unidades', $this->unidades);
@@ -66,26 +72,15 @@ class CestaCompra
 
     public function get_productos()
     {
+        // Devuelve el array de objetos de productos en la cesta
         $this->carga_cesta();
         return $this->productos;
     }
 
     public function get_unidades()
     {
+        // Devuelve el array de cantidades asociadas a los productos
         $this->carga_cesta();
         return $this->unidades;
-    }
-
-    public function eliminar_producto($codigo_producto, $unidades): void
-    {
-        $this->carga_cesta();
-        if (array_key_exists($codigo_producto, $this->productos)) {
-            $this->unidades[$codigo_producto] -= $unidades;
-            if ($this->unidades[$codigo_producto] <= 0) {
-                unset($this->unidades[$codigo_producto]);
-                unset($this->productos[$codigo_producto]);
-            }
-            $this->guardar_cesta();
-        }
     }
 }
