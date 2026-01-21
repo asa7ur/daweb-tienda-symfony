@@ -12,7 +12,6 @@ use App\Entity\Pedido;
 use App\Entity\PedidoProducto;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
-use Symfony\Component\Validator\Constraints\DateTime;
 use App\Service\CestaCompra;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,40 +76,46 @@ final class BaseController extends AbstractController
         return $this->redirectToRoute('cesta');
     }
     
+    #[Route('/pedido', name: 'pedido')]
     public function pedido(EntityManagerInterface $em, CestaCompra $cesta): Response
-{
-    $usuario = $this->getUser();
-    $productos = $cesta->get_productos();
-    $unidades = $cesta->get_unidades();
-    
-    $pedido = new Pedido();
-    $pedido->setUsuario($usuario);
-    $pedido->setFecha(new \DateTime());
-    
-    $pedido->setCoste($cesta->get_coste_total());
-    
-    $error = false;
-
-    foreach($productos as $codigo => $producto){
-        $pedidoProducto = new PedidoProducto();
-        $pedidoProducto->setProducto($producto);
-        $pedidoProducto->setUnidades($unidades[$codigo]);
-        $pedidoProducto->setPedido($pedido);
+    {
+        $error = 0;
         
-        $em->persist($pedidoProducto);
-    }
-    
-    $em->persist($pedido);
-    
-    try {
-        $em->flush();
-    } catch (\Exception $ex) {
-        $error = true;
-    }
+        $usuario = $this->getUser();
+        $productos = $cesta->get_productos();
+        $unidades = $cesta->get_unidades();
 
-    return $this->render('pedido/pedido.html.twig', [
-        'error' => $error,
-        'pedido_id' => $pedido->getId()
-    ]);
-}
+        if(count($productos) == 0){
+            // Valor 1 cuando no hay productos en la cesta
+            $error = 1;
+        } else{
+            // Generamos un nuevo objeto Pedido con sus Setters
+            $pedido = new Pedido();
+            $pedido->setUsuario($usuario);
+            $pedido->setFecha(new \DateTime());
+            $pedido->setCoste($cesta->get_coste_total());
+
+            $em->persist($pedido);
+            
+            foreach($productos as $codigo => $producto){
+                $pedidoProducto = new PedidoProducto();
+                $pedidoProducto->setProducto($producto);
+                $pedidoProducto->setUnidades($unidades[$codigo]);
+                $pedidoProducto->setPedido($pedido);
+
+                $em->persist($pedidoProducto);
+            }
+
+            try {
+                $em->flush();
+            } catch (\Exception $ex) {
+                $error = true;
+            }
+
+            return $this->render('pedido/pedido.html.twig', [
+                'error' => $error,
+                'pedido_id' => $pedido->getId()
+            ]);
+        }
+    }
 }
