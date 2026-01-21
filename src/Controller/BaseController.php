@@ -95,23 +95,28 @@ final class BaseController extends AbstractController
             $pedido->setUsuario($usuario);
             $pedido->setFecha(new \DateTime());
             $pedido->setCoste($cesta->calcular_coste(null, $unidades));
-            $pedido->setCode(bin2hex(random_bytes(2)));
 
             $em->persist($pedido);
             
             foreach ($productos as $codigo => $producto) {
                 $pedidoProducto = new PedidoProducto();
-                $pedidoProducto->setProducto($producto);
-                $pedidoProducto->setUnidades($unidades[$codigo]);
-                $pedidoProducto->setPedido($pedido);
+                
+                $productoGestionado = $em->getRepository(Producto::class)->find($producto->getId());
+                
+                if ($productoGestionado) {
+                    $pedidoProducto->setProducto($productoGestionado);
+                    $pedidoProducto->setUnidades($unidades[$codigo]);
+                    $pedidoProducto->setPedido($pedido);
 
-                $em->persist($pedidoProducto);
+                    $em->persist($pedidoProducto);
+                }
             }
 
             try {
                 $em->flush();
                 $pedido_id = $pedido->getId(); // Se asigna el ID tras guardar con éxito
             } catch (\Exception $ex) {
+                dd($ex->getMessage());
                 $error = 2; // Código de error para fallos de base de datos
             }
         }

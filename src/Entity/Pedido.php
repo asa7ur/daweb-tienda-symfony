@@ -24,7 +24,7 @@ class Pedido
     #[ORM\JoinColumn(nullable: false)]
     private ?Usuario $usuario = null;
 
-    #[ORM\Column(length: 4)]
+    #[ORM\Column(length: 4, nullable: true)]
     private ?string $code = null;
 
     public function getId(): ?int
