@@ -78,9 +78,11 @@
                                 <span>Total:</span>
                                 <span class="text-info">{{ total|number_format(2, ',', '.') }} €</span>
                             </div>
-                            <button class="btn btn-success w-100 btn-lg mb-3 fw-bold">FINALIZAR PEDIDO</button>
-                            <a href="{{ path('categorias') }}" class="btn btn-outline-light w-100 btn-sm">Continuar
-                                comprando</a>
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{{ path('categorias') }}" class="btn btn-secondary">Seguir comprando</a>
+
+                                <a href="{{ path('pedido') }}" class="btn btn-primary">Finalizar Pedido</a>
+                            </div>
                         </div>
                     </div>
                 </div>

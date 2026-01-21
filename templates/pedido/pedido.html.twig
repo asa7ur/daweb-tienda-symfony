@@ -1,1 +1,47 @@
-{# empty Twig template #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Estado del Pedido{% endblock %}
+
+{% block contenido %}
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body text-center p-5">
+                    
+                    {% if error == 1 %}
+                        {# Caso: Cesta vacía #}
+                        <div class="alert alert-warning" role="alert">
+                            <h4 class="alert-heading">¡Cesta vacía!</h4>
+                            <p>No hay productos en tu cesta para realizar un pedido.</p>
+                            <hr>
+                            <a href="{{ path('categorias') }}" class="btn btn-primary">Volver a la tienda</a>
+                        </div>
+
+                    {% elseif error != 0 %}
+                        {# Caso: Error técnico (base de datos o excepción) #}
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading">Error al procesar el pedido</h4>
+                            <p>Lo sentimos, se ha producido un error inesperado al guardar tu pedido. Por favor, inténtalo de nuevo más tarde.</p>
+                            <hr>
+                            <a href="{{ path('cesta') }}" class="btn btn-outline-danger">Volver a la cesta</a>
+                        </div>
+
+                    {% else %}
+                        {# Caso: Éxito #}
+                        <div class="alert alert-success" role="alert">
+                            <h4 class="alert-heading">¡Pedido realizado con éxito!</h4>
+                            <p>Tu pedido ha sido procesado correctamente y ya está en marcha.</p>
+                            <p class="mb-0"><strong>Número de pedido: #{{ pedido_id }}</strong></p>
+                            <hr>
+                            <div class="d-grid gap-2 d-md-block">
+                                <a href="{{ path('categorias') }}" class="btn btn-success">Seguir comprando</a>
+                                {# Aquí podrías añadir un enlace a 'Mis Pedidos' si existiera la ruta #}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

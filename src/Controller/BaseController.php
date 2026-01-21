@@ -80,24 +80,28 @@ final class BaseController extends AbstractController
     public function pedido(EntityManagerInterface $em, CestaCompra $cesta): Response
     {
         $error = 0;
+        $pedido_id = null; // Inicialización para evitar errores en la plantilla si la cesta está vacía
         
-        $usuario = $this->getUser();
-        $productos = $cesta->get_productos();
-        $unidades = $cesta->get_unidades();
+        $usuario = $this->getUser(); // Obtiene el usuario autenticado
+        $productos = $cesta->get_productos(); // Recupera productos de la sesión
+        $unidades = $cesta->get_unidades(); // Recupera cantidades de la sesión
 
-        if(count($productos) == 0){
+        if (count($productos) == 0) {
             // Valor 1 cuando no hay productos en la cesta
             $error = 1;
-        } else{
+        } else {
             // Generamos un nuevo objeto Pedido con sus Setters
             $pedido = new Pedido();
             $pedido->setUsuario($usuario);
             $pedido->setFecha(new \DateTime());
-            $pedido->setCoste($cesta->get_coste_total());
+            
+            // Se usa calcular_coste pasando los parámetros que requiere la firma en CestaCompra
+            // El primer parámetro se ignora en la lógica interna del servicio, pero es obligatorio
+            $pedido->setCoste($cesta->calcular_coste(null, $unidades)); 
 
             $em->persist($pedido);
             
-            foreach($productos as $codigo => $producto){
+            foreach ($productos as $codigo => $producto) {
                 $pedidoProducto = new PedidoProducto();
                 $pedidoProducto->setProducto($producto);
                 $pedidoProducto->setUnidades($unidades[$codigo]);
@@ -108,14 +112,15 @@ final class BaseController extends AbstractController
 
             try {
                 $em->flush();
+                $pedido_id = $pedido->getId(); // Se asigna el ID tras guardar con éxito
             } catch (\Exception $ex) {
-                $error = true;
+                $error = 2; // Código de error para fallos de base de datos
             }
-
-            return $this->render('pedido/pedido.html.twig', [
-                'error' => $error,
-                'pedido_id' => $pedido->getId()
-            ]);
         }
+
+        return $this->render('pedido/pedido.html.twig', [
+            'error' => $error,
+            'pedido_id' => $pedido_id
+        ]);
     }
 }
