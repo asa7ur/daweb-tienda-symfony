@@ -94,10 +94,8 @@ final class BaseController extends AbstractController
             $pedido = new Pedido();
             $pedido->setUsuario($usuario);
             $pedido->setFecha(new \DateTime());
-            
-            // Se usa calcular_coste pasando los parámetros que requiere la firma en CestaCompra
-            // El primer parámetro se ignora en la lógica interna del servicio, pero es obligatorio
-            $pedido->setCoste($cesta->calcular_coste(null, $unidades)); 
+            $pedido->setCoste($cesta->calcular_coste(null, $unidades));
+            $pedido->setCode(bin2hex(random_bytes(2)));
 
             $em->persist($pedido);
             
