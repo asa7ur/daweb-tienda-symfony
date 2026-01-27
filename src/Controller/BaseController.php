@@ -11,8 +11,9 @@ use App\Entity\Usuario;
 use App\Entity\Producto;
 use App\Entity\Pedido;
 use App\Entity\PedidoProducto;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Address;
 use App\Service\CestaCompra;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,7 +79,7 @@ final class BaseController extends AbstractController
     }
     
     #[Route('/pedido', name: 'pedido')]
-    public function pedido(EntityManagerInterface $em, CestaCompra $cesta): Response
+    public function pedido(EntityManagerInterface $em, CestaCompra $cesta, MailerInterface $mailer): Response
     {
         $error = 0;
         $pedido_id = null; // Inicialización para evitar errores en la plantilla si la cesta está vacía
@@ -123,9 +124,9 @@ final class BaseController extends AbstractController
             
             if (!$error){
                 // Obtenemos el ID del usuario de la sesión
-                $usuario_id = $this->getUser()->getUserIdentifier();
+                $usuario_login = $this->getUser()->getUserIdentifier();
                 
-                $usuario = $em->getRepository(Usuario::class)->find($usuario_id);
+                $usuario = $em->getRepository(Usuario::class)->findOneBy(['login' => $usuario_login]);
                 
                 $destination_email = $usuario->getEmail();
                         
@@ -139,10 +140,11 @@ final class BaseController extends AbstractController
                     ->locale('es')
                     // pasamos variables (clave => valor) a la plantilla
                     ->context([
-                        'pedido_id' => $pedido->getId(), 'productos' => $cesta ->getProductos(), 'unidades' => $cesta->getUnidades(),
-                        'coste' => $cesta->getCoste(),
+                        'pedido_id' => $pedido->getId(), 'productos' => $cesta ->get_productos(), 'unidades' => $cesta->get_unidades(),
+                        'coste' => $cesta->calcular_coste(),
                     ])
                 ;
+                $mailer->send($email);
 
             }
         }

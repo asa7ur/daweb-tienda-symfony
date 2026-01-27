@@ -47,11 +47,11 @@ class CestaCompra
         $this->unidades[$codigo] += $unidades;
     }
     
-    public function calcular_coste($producto, $unidades){
+    public function calcular_coste(){
         $this->carga_cesta();
         $resultado = 0;
         foreach($this->productos as $codigo => $producto){
-            $resultado += $producto->getPrecio() * $unidades[$codigo];
+            $resultado += $producto->getPrecio() * $this->unidades[$codigo];
         }
         return $resultado;
     }
