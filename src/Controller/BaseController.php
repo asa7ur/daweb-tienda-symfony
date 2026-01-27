@@ -132,7 +132,7 @@ final class BaseController extends AbstractController
                         
                 $email = (new TemplatedEmail())
                     ->from('gar.asat.96@gmail.com')
-                    ->to(new Address($destination_email))
+                    ->to(new Address('gasa692@g.educaand.es'))
                     ->subject('Confirmación de pedido' . $pedido->getId())
 
                     // indicamos la ruta de la plantilla
