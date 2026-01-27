@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Categoria;
+use App\Entity\Usuario;
 use App\Entity\Producto;
 use App\Entity\Pedido;
 use App\Entity\PedidoProducto;
@@ -118,6 +119,31 @@ final class BaseController extends AbstractController
             } catch (\Exception $ex) {
                 dd($ex->getMessage());
                 $error = 2; // Código de error para fallos de base de datos
+            }
+            
+            if (!$error){
+                // Obtenemos el ID del usuario de la sesión
+                $usuario_id = $this->getUser()->getUserIdentifier();
+                
+                $usuario = $em->getRepository(Usuario::class)->find($usuario_id);
+                
+                $destination_email = $usuario->getEmail();
+                        
+                $email = (new TemplatedEmail())
+                    ->from('gar.asat.96@gmail.com')
+                    ->to(new Address($destination_email))
+                    ->subject('Confirmación de pedido' . $pedido->getId())
+
+                    // indicamos la ruta de la plantilla
+                    ->htmlTemplate('correo.html.twig')
+                    ->locale('es')
+                    // pasamos variables (clave => valor) a la plantilla
+                    ->context([
+                        'pedido_id' => $pedido->getId(), 'productos' => $cesta ->getProductos(), 'unidades' => $cesta->getUnidades(),
+                        'coste' => $cesta->getCoste(),
+                    ])
+                ;
+
             }
         }
 
