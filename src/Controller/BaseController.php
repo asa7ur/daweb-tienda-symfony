@@ -154,4 +154,16 @@ final class BaseController extends AbstractController
             'pedido_id' => $pedido_id
         ]);
     }
+    
+    #[Route('/historial', name: 'historial_pedidos')]
+    public function historial(): Response
+    {
+        $usuario = $this->getUser();
+        
+        $pedidos = $usuario->getPedidos();
+        
+        return $this->render('pedido/historial.html.twig', [
+            'pedidos' => $pedidos,
+        ]);
+    }
 }
