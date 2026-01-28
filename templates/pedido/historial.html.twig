@@ -1,10 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mi Historial - Perfume Shop{% endblock %}
+{% block title %}Mi Historial{% endblock %}
 
-{% block body %}
+{% block contenido %}
 <div class="container mt-5">
-    {# Título con la estética de tu tienda #}
     <div class="row mb-4">
         <div class="col border-bottom pb-2">
             <h2 class="text-primary">
@@ -28,26 +27,20 @@
                             <th>Fecha</th>
                             <th>Referencia</th>
                             <th>Total</th>
-                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for pedido in pedidos %}
                             <tr>
                                 <td class="ps-3 fw-bold text-muted">#{{ pedido.id }}</td>
-                                <td>{{ pedido.fecha|date('d/m/Y H:i') }}</td>
+                                <td>{{ pedido.fecha|date('d/m/Y') }}</td>
                                 <td>
                                     <span class="badge bg-secondary">
                                         {{ pedido.code ?? 'S/N' }}
                                     </span>
                                 </td>
                                 <td class="fw-bold text-dark">
-                                    {{ pedido.coste|number_format(2, ',', '.') }} €
-                                </td>
-                                <td class="text-center">
-                                    <a href="#" class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                                        Detalles
-                                    </a>
+                                    {{ pedido.coste}} €
                                 </td>
                             </tr>
                         {% endfor %}
