@@ -82,88 +82,79 @@ final class BaseController extends AbstractController
     public function pedido(EntityManagerInterface $em, CestaCompra $cesta, MailerInterface $mailer): Response
     {
         $error = 0;
-        $pedido_id = null; // Inicialización para evitar errores en la plantilla si la cesta está vacía
-        
-        $usuario = $this->getUser(); // Obtiene el usuario autenticado
-        $productos = $cesta->get_productos(); // Recupera productos de la sesión
-        $unidades = $cesta->get_unidades(); // Recupera cantidades de la sesión
+        $pedido_id = null;
+
+        $usuario = $this->getUser(); 
+        $productos = $cesta->get_productos(); 
+        $unidades = $cesta->get_unidades(); 
 
         if (count($productos) == 0) {
-            // Valor 1 cuando no hay productos en la cesta
             $error = 1;
+            $pedido = null;
         } else {
-            // Generamos un nuevo objeto Pedido con sus Setters
             $pedido = new Pedido();
             $pedido->setUsuario($usuario);
             $pedido->setFecha(new \DateTime());
-            $pedido->setCoste($cesta->calcular_coste(null, $unidades));
+            // Usamos el coste calculado por la cesta
+            $pedido->setCoste($cesta->calcular_coste());
 
             $em->persist($pedido);
-            
+
             foreach ($productos as $codigo => $producto) {
                 $pedidoProducto = new PedidoProducto();
-                
+
+                // Buscamos el producto en la base de datos para asegurar la persistencia
                 $productoGestionado = $em->getRepository(Producto::class)->find($producto->getId());
-                
+
                 if ($productoGestionado) {
                     $pedidoProducto->setProducto($productoGestionado);
                     $pedidoProducto->setUnidades($unidades[$codigo]);
                     $pedidoProducto->setPedido($pedido);
 
                     $em->persist($pedidoProducto);
+
+                    $pedido->addPedidoProducto($pedidoProducto);
                 }
             }
 
             try {
                 $em->flush();
-                $pedido_id = $pedido->getId(); // Se asigna el ID tras guardar con éxito
+                $pedido_id = $pedido->getId(); 
             } catch (\Exception $ex) {
-                dd($ex->getMessage());
-                $error = 2; // Código de error para fallos de base de datos
+                $error = 2; 
             }
-            
+
             if (!$error){
-                // Obtenemos el ID del usuario de la sesión
-                $usuario_login = $this->getUser()->getUserIdentifier();
-                
-                $usuario = $em->getRepository(Usuario::class)->findOneBy(['login' => $usuario_login]);
-                
                 $destination_email = $usuario->getEmail();
-                
+
                 $resumenProductos = [];
                 foreach ($productos as $codigo => $producto) {
                     $resumenProductos[] = [
-                        'codigo' => $producto->getCodigo(),
                         'nombre' => $producto->getNombreCorto(),
-                        'descripcion' => $producto->getDescripcion(),
                         'precio' => $producto->getPrecio(),
                         'unidades' => $unidades[$codigo]
                     ];
                 }
-                        
+
                 $email = (new TemplatedEmail())
                     ->from('gar.asat.96@gmail.com')
                     ->to(new Address($destination_email))
-                    ->subject('Confirmación de pedido' . $pedido->getId())
-
-                    // indicamos la ruta de la plantilla
+                    ->subject('Confirmación de pedido #' . $pedido->getId())
                     ->htmlTemplate('correo.html.twig')
-                    ->locale('es')
-                    // pasamos variables (clave => valor) a la plantilla
                     ->context([
                         'pedido_id' => $pedido->getId(), 
                         'productos' => $resumenProductos,
-                        'coste' => $cesta->calcular_coste(),
-                    ])
-                ;
-                $mailer->send($email);
+                        'coste' => $pedido->getCoste(),
+                    ]);
 
+                $mailer->send($email);
             }
         }
 
         return $this->render('pedido/pedido.html.twig', [
             'error' => $error,
-            'pedido_id' => $pedido_id
+            'pedido_id' => $pedido_id,
+            'pedido' => $pedido
         ]);
     }
     

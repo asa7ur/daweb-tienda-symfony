@@ -19,7 +19,7 @@
         </div>
     {% else %}
         <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="col-md-10 mx-auto"> {# Ampliado un poco para dar espacio a la tabla de productos #}
                 <div class="card shadow-sm border-0">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
@@ -28,21 +28,55 @@
                                     <th class="ps-3">ID</th>
                                     <th>Fecha</th>
                                     <th>Referencia</th>
+                                    <th>Productos</th> {# Nueva columna explicativa #}
                                     <th class="text-end pe-3">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for pedido in pedidos %}
-                                    <tr>
-                                        <td class="ps-3 fw-bold text-muted">#{{ pedido.id }}</td>
+                                    {# Fila principal del pedido #}
+                                    <tr data-bs-toggle="collapse" data-bs-target="#detalle-{{ pedido.id }}" style="cursor: pointer;">
+                                        <td class="ps-3 fw-bold text-primary">#{{ pedido.id }} <i class="fa fa-caret-down small"></i></td>
                                         <td>{{ pedido.fecha|date('d/m/Y') }}</td>
                                         <td>
                                             <span class="badge bg-secondary">
                                                 {{ pedido.code ?? 'S/N' }}
                                             </span>
                                         </td>
+                                        <td>
+                                            <small class="text-muted">{{ pedido.pedidoProductos|length }} artículos</small>
+                                        </td>
                                         <td class="fw-bold text-dark text-end pe-3">
                                             {{ pedido.coste }} €
+                                        </td>
+                                    </tr>
+                                    {# Fila desplegable con el detalle (getPedidoProductos) #}
+                                    <tr class="collapse bg-light" id="detalle-{{ pedido.id }}">
+                                        <td colspan="5" class="p-0">
+                                            <div class="px-4 py-3">
+                                                <table class="table table-sm table-bordered bg-white mb-0 shadow-sm">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th>Producto</th>
+                                                            <th class="text-center">Unidades</th>
+                                                            <th class="text-end">Precio Unit.</th>
+                                                            <th class="text-end">Subtotal</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for item in pedido.pedidoProductos %}
+                                                            <tr>
+                                                                <td>{{ item.producto.nombreCorto }}</td>
+                                                                <td class="text-center">{{ item.unidades }}</td>
+                                                                <td class="text-end">{{ item.producto.precio }} €</td>
+                                                                <td class="text-end">
+                                                                    {{ (item.unidades * item.producto.precio)|number_format(2) }} €
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </td>
                                     </tr>
                                 {% endfor %}

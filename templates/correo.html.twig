@@ -7,17 +7,13 @@
 
 <table>
     <tr>
-        <th>Código</th>
         <th>Nombre</th>
-        <th>Descripción</th>
         <th>Precio y unidades</th>
         <th>Precio total</th>
     </tr>
     {% for item in productos %}
         <tr>
-            <td>{{ item.codigo }}</td>
             <td>{{ item.nombre }}</td>
-            <td>{{ item.descripcion }}</td>
             <td>{{ item.precio }}€ x{{ item.unidades }}</td>
             <td>{{ (item.precio * item.unidades)|number_format(2) }}€</td>
         </tr>

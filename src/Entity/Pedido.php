@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PedidoRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -26,6 +28,14 @@ class Pedido
 
     #[ORM\Column(length: 4, nullable: true)]
     private ?string $code = null;
+    
+    #[ORM\OneToMany(mappedBy: 'pedido', targetEntity: PedidoProducto::class, orphanRemoval: true)]
+    private Collection $pedidoProductos;
+    
+    public function __construct()
+    {
+        $this->pedidoProductos = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -76,6 +86,21 @@ class Pedido
     public function setCode(string $code): static
     {
         $this->code = $code;
+
+        return $this;
+    }
+    
+    public function getPedidoProductos(): Collection
+    {
+        return $this->pedidoProductos;
+    }
+    
+    public function addPedidoProducto(PedidoProducto $pedidoProducto): static
+    {
+        if (!$this->pedidoProductos->contains($pedidoProducto)) {
+            $this->pedidoProductos->add($pedidoProducto);
+            $pedidoProducto->setPedido($this);
+        }
 
         return $this;
     }

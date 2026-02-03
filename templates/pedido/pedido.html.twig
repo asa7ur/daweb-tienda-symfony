@@ -3,40 +3,91 @@
 {% block title %}Estado del Pedido{% endblock %}
 
 {% block contenido %}
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-body text-center p-5">
+        <div class="col-md-9">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5">
                     
                     {% if error == 1 %}
                         {# Caso: Cesta vacía #}
-                        <div class="alert alert-warning" role="alert">
-                            <h4 class="alert-heading">¡Cesta vacía!</h4>
-                            <p>No hay productos en tu cesta para realizar un pedido.</p>
-                            <hr>
-                            <a href="{{ path('categorias') }}" class="btn btn-primary">Volver a la tienda</a>
+                        <div class="text-center">
+                            <div class="alert alert-warning border-0 shadow-sm" role="alert">
+                                <i class="fa fa-shopping-cart fa-3x mb-3"></i>
+                                <h4 class="alert-heading fw-bold">¡Cesta vacía!</h4>
+                                <p>No hay productos en tu cesta para realizar un pedido.</p>
+                                <hr>
+                                <a href="{{ path('categorias') }}" class="btn btn-primary px-4">
+                                    <i class="fa fa-arrow-left"></i> Volver a la tienda
+                                </a>
+                            </div>
                         </div>
 
                     {% elseif error != 0 %}
-                        {# Caso: Error técnico (base de datos o excepción) #}
-                        <div class="alert alert-danger" role="alert">
-                            <h4 class="alert-heading">Error al procesar el pedido</h4>
-                            <p>Lo sentimos, se ha producido un error inesperado al guardar tu pedido. Por favor, inténtalo de nuevo más tarde.</p>
-                            <hr>
-                            <a href="{{ path('cesta') }}" class="btn btn-outline-danger">Volver a la cesta</a>
+                        {# Caso: Error técnico #}
+                        <div class="text-center">
+                            <div class="alert alert-danger border-0 shadow-sm" role="alert">
+                                <i class="fa fa-exclamation-triangle fa-3x mb-3"></i>
+                                <h4 class="alert-heading fw-bold">Error al procesar el pedido</h4>
+                                <p>Lo sentimos, se ha producido un error inesperado al guardar tu pedido.</p>
+                                <hr>
+                                <a href="{{ path('cesta') }}" class="btn btn-outline-danger px-4">Volver a la cesta</a>
+                            </div>
                         </div>
 
                     {% else %}
                         {# Caso: Éxito #}
-                        <div class="alert alert-success" role="alert">
-                            <h4 class="alert-heading">¡Pedido realizado con éxito!</h4>
-                            <p>Tu pedido ha sido procesado correctamente y ya está en marcha.</p>
-                            <p class="mb-0"><strong>Número de pedido: #{{ pedido_id }}</strong></p>
-                            <hr>
-                            <div class="d-grid gap-2 d-md-block">
-                                <a href="{{ path('categorias') }}" class="btn btn-success">Seguir comprando</a>
-                                {# Aquí podrías añadir un enlace a 'Mis Pedidos' si existiera la ruta #}
+                        <div class="text-center mb-4">
+                            <i class="fa fa-check-circle text-success fa-4x mb-3"></i>
+                            <h2 class="fw-bold text-success">¡Pedido realizado con éxito!</h2>
+                            <p class="text-muted">Tu pedido ha sido procesado correctamente y ya está en marcha.</p>
+                            <span class="badge bg-primary fs-6 p-2 mb-4">
+                                Número de pedido: #{{ pedido_id }}
+                            </span>
+                        </div>
+
+                        {# Resumen del pedido usando la relación OneToMany #}
+                        <div class="mt-4">
+                            <h5 class="text-start border-bottom pb-2 mb-3">
+                                <i class="fa fa-list-ul"></i> Resumen de tu compra
+                            </h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th class="text-center">Cant.</th>
+                                            <th class="text-end">Precio</th>
+                                            <th class="text-end">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in pedido.pedidoProductos %}
+                                            <tr>
+                                                <td class="fw-bold text-dark">{{ item.producto.nombreCorto }}</td>
+                                                <td class="text-center">{{ item.unidades }}</td>
+                                                <td class="text-end">{{ item.producto.precio }} €</td>
+                                                <td class="text-end">{{ (item.unidades * item.producto.precio)|number_format(2) }} €</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="table-active">
+                                            <td colspan="3" class="text-end fw-bold">Total Pagado:</td>
+                                            <td class="text-end fw-bold text-primary fs-5">{{ pedido.coste }} €</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                            <a href="{{ path('categorias') }}" class="btn btn-outline-primary px-4">
+                                <i class="fa fa-shopping-bag"></i> Seguir comprando
+                            </a>
+                            <a href="{{ path('historial') }}" class="btn btn-primary px-4">
+                                <i class="fa fa-history"></i> Ver mis pedidos
+                            </a>
                         </div>
                     {% endif %}
 
@@ -44,4 +95,5 @@
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
