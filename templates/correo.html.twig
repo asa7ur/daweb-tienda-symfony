@@ -13,14 +13,14 @@
         <th>Precio y unidades</th>
         <th>Precio total</th>
     </tr>
-    {% for codigo, producto in productos %}
-     <tr>
-      <td>{{ codigo }}</td>
-      <td>{{ producto.getNombreCorto() }}</td>
-      <td>{{ producto.getDescripcion() }}</td>
-      <td>{{ producto.precio() }}€ X{{ unidades[codigo] }}</td>
-      <td>{{ coste }}€</td>
-     </tr>
+    {% for item in productos %}
+        <tr>
+            <td>{{ item.codigo }}</td>
+            <td>{{ item.nombre }}</td>
+            <td>{{ item.descripcion }}</td>
+            <td>{{ item.precio }}€ x{{ item.unidades }}</td>
+            <td>{{ (item.precio * item.unidades)|number_format(2) }}€</td>
+        </tr>
     {% endfor %}
 </table>
 

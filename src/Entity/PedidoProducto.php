@@ -19,7 +19,7 @@ class PedidoProducto
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Producto $Producto = null;
+    private ?Producto $producto = null;
 
     #[ORM\Column]
     private ?int $unidades = null;
@@ -43,12 +43,12 @@ class PedidoProducto
 
     public function getProducto(): ?Producto
     {
-        return $this->Producto;
+        return $this->producto;
     }
 
     public function setProducto(?Producto $Producto): static
     {
-        $this->Producto = $Producto;
+        $this->producto = $Producto;
 
         return $this;
     }

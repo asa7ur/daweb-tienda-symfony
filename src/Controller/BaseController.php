@@ -68,7 +68,7 @@ final class BaseController extends AbstractController
         ]);
     }
 
-    #[Route('/actualizar', name: 'actualizar_cantidad', methods: ['POST'])]
+    #[Route('/actualizar', name: 'actualizar', methods: ['POST'])]
     public function actualizar(Request $request, CestaCompra $cesta): Response
     {
         // Actualiza la cantidad o elimina si es 0 (unifica la lógica de borrar)
@@ -129,10 +129,21 @@ final class BaseController extends AbstractController
                 $usuario = $em->getRepository(Usuario::class)->findOneBy(['login' => $usuario_login]);
                 
                 $destination_email = $usuario->getEmail();
+                
+                $resumenProductos = [];
+                foreach ($productos as $codigo => $producto) {
+                    $resumenProductos[] = [
+                        'codigo' => $producto->getCodigo(),
+                        'nombre' => $producto->getNombreCorto(),
+                        'descripcion' => $producto->getDescripcion(),
+                        'precio' => $producto->getPrecio(),
+                        'unidades' => $unidades[$codigo]
+                    ];
+                }
                         
                 $email = (new TemplatedEmail())
                     ->from('gar.asat.96@gmail.com')
-                    ->to(new Address('gasa692@g.educaand.es'))
+                    ->to(new Address($destination_email))
                     ->subject('Confirmación de pedido' . $pedido->getId())
 
                     // indicamos la ruta de la plantilla
@@ -140,7 +151,8 @@ final class BaseController extends AbstractController
                     ->locale('es')
                     // pasamos variables (clave => valor) a la plantilla
                     ->context([
-                        'pedido_id' => $pedido->getId(), 'productos' => $cesta ->get_productos(), 'unidades' => $cesta->get_unidades(),
+                        'pedido_id' => $pedido->getId(), 
+                        'productos' => $resumenProductos,
                         'coste' => $cesta->calcular_coste(),
                     ])
                 ;
@@ -155,7 +167,7 @@ final class BaseController extends AbstractController
         ]);
     }
     
-    #[Route('/historial', name: 'historial_pedidos')]
+    #[Route('/historial', name: 'historial')]
     public function historial(): Response
     {
         $usuario = $this->getUser();

@@ -32,8 +32,8 @@
                     {# Botón Mis Pedidos (Solo visible si está logueado) #}
                     <li class="nav-item me-2">
                         <a class="btn btn-info btn-sm rounded-pill px-3 text-white
-                           {% if app.request.attributes.get('_route') == 'historial_pedidos' %}active{% endif %}"
-                           href="{{ path('historial_pedidos') }}">
+                           {% if app.request.attributes.get('_route') == 'historial' %}active{% endif %}"
+                           href="{{ path('historial') }}">
                             📦 Mis Pedidos
                         </a>
                     </li>
