@@ -9,13 +9,16 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Categoria;
 use App\Entity\Producto;
+use App\Entity\Usuario;
+use App\Entity\Pedido;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
     public function index(): Response
     {
-        return parent::index();
+        // return parent::index();
 
         // Option 1. You can make your dashboard redirect to some common page of your backend
         //
@@ -23,8 +26,8 @@ class DashboardController extends AbstractDashboardController
         // return $this->redirectToRoute('admin_user_index');
         //
         // 1.2) Same example but using the "ugly URLs" that were used in previous EasyAdmin versions:
-        // $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        // return $this->redirect($adminUrlGenerator->setController(OneOfYourCrudController::class)->generateUrl());
+        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
+        return $this->redirect($adminUrlGenerator->setController(CategoriaCrudController::class)->generateUrl());
 
         // Option 2. You can make your dashboard redirect to different pages depending on the user
         //
@@ -49,5 +52,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('Categoría', 'fas fa-list', Categoria::class);
         yield MenuItem::linkToCrud('Producto', 'fas fa-list', Producto::class);
+        yield MenuItem::linkToCrud('Usuarios', 'fas fa-list', Usuario::class);
+        yield MenuItem::linkToCrud('Pedidos', 'fas fa-list', Pedido::class);
     }
 }

@@ -7,12 +7,21 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 
 class ProductoCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
         return Producto::class;
+    }
+    
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('codigo')
+            ->add('nombre')
+        ;
     }
 
     /*

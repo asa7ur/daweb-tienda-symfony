@@ -2,28 +2,19 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\Categoria;
+use App\Entity\Pedido;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters; 
 
-class CategoriaCrudController extends AbstractCrudController
+class PedidoCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return Categoria::class;
+        return Pedido::class;
     }
-    
-    public function configureFilters(Filters $filters): Filters
-    {
-        return $filters
-            ->add('codigo')
-            ->add('nombre')
-        ;
-    }
-    
+
     /*
     public function configureFields(string $pageName): iterable
     {

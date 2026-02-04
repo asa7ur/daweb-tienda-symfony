@@ -26,7 +26,7 @@ class Categoria
      */
     #[ORM\OneToMany(targetEntity: Producto::class, mappedBy: 'categoria')]
     private Collection $productos;
-
+    
     public function __construct()
     {
         $this->productos = new ArrayCollection();
