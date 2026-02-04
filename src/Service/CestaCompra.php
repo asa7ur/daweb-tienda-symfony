@@ -92,4 +92,10 @@ class CestaCompra
         $this->carga_cesta();
         return $this->unidades;
     }
+    
+    public function is_vacia(): bool
+    {
+        $this->carga_cesta();
+        return empty($this->productos);
+    } 
 }
