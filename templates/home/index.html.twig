@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenido a Perfume Shop{% endblock %}
+
+{% block contenido %}
+<div class="p-5 mb-4 bg-light rounded-3 shadow-sm">
+    <div class="container-fluid py-5 text-center">
+        <h1 class="display-5 fw-bold">Bienvenido a 🛍️ Perfume Shop</h1>
+        <p class="col-md-12 fs-4">
+            Descubre nuestra exclusiva colección de fragancias.
+            Inicia sesión para empezar a comprar y gestionar tus pedidos.
+        </p>
+        {% if not app.user %}
+        <a href="{{ path('login') }}" class="btn btn-primary btn-lg px-4 rounded-pill">Iniciar Sesión</a>
+        {% else %}
+        <a href="{{ path('categorias') }}" class="btn btn-primary btn-lg px-4 rounded-pill">Ver Categorías</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row align-items-md-stretch">
+    <div class="col-md-6">
+        <div class="h-100 p-5 text-white bg-dark rounded-3">
+            <h2>Catálogo Exclusivo</h2>
+            <p>Explora nuestras categorías seleccionadas de las mejores marcas del mundo.</p>
+            <a href="{{ path('categorias') }}" class="btn btn-outline-light">Explorar</a>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="h-100 p-5 bg-light border rounded-3 shadow-sm">
+            <h2>Tus Pedidos</h2>
+            <p>Consulta el historial de tus compras y el estado de tus envíos actuales.</p>
+            <a href="{{ path('historial') }}" class="btn btn-outline-secondary">Ver Historial</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

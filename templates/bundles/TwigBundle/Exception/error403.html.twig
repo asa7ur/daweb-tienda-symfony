@@ -1,0 +1,42 @@
+{# templates/bundles/TwigBundle/Exception/error403.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Acceso Restringido{% endblock %}
+
+{% block contenido %}
+    <div class="container text-center mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <div class="card border-0 shadow-lg py-5">
+                    <div class="card-body">
+                        <div class="display-1 text-danger mb-4">
+                            <i class="bi bi-shield-lock"></i> 403
+                        </div>
+                        <h2 class="fw-bold text-dark">¡Alto ahí! Acceso restringido</h2>
+                        <p class="text-muted fs-5 mt-3">
+                            Lo sentimos, <strong>{{ app.user.login|default('usuario') }}</strong>, pero no tienes los
+                            permisos de administrador necesarios para ver esta sección.
+                        </p>
+
+                        <div class="alert alert-warning d-inline-block mt-3 px-4">
+                            Tu intento de acceso ha sido registrado por seguridad.
+                        </div>
+
+                        <div class="mt-5">
+                            <a href="{{ path('home') }}" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">
+                                Volver a la tienda
+                            </a>
+                        </div>
+
+                        <div class="mt-4">
+                            <small class="text-muted">
+                                ¿Eres administrador? <a href="{{ path('logout') }}" class="text-decoration-none">Cierra
+                                    sesión</a> e ingresa con tus credenciales correctas.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
