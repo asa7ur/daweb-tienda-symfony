@@ -1,3 +1,52 @@
+/* assets/styles/app.css */
+:root {
+    --primary-color: #6366f1; /* Un violeta/índigo más moderno */
+}
+
 body {
-    background-color: skyblue;
+    background-color: #f8fafc; /* Un gris muy claro en lugar de skyblue para mayor elegancia */
+    font-family: 'Inter', sans-serif; /* Requiere importar la fuente en base.html.twig */
+}
+
+.navbar {
+    transition: all 0.3s ease;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+}
+
+.nav-link {
+    position: relative;
+    transition: color 0.2s;
+}
+
+/* Efecto de línea inferior al pasar el ratón por los links */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--primary-color);
+    transition: width 0.3s;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* Sombra suave para los botones */
+.btn {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }

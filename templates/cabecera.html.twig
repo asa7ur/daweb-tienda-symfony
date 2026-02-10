@@ -1,83 +1,62 @@
+{# templates/cabecera.html.twig #}
 {% block header %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top border-bottom">
         <div class="container">
-
-            <a class="navbar-brand fw-bold" href="{{ path('categorias') }}">
-                🛍️ Perfume Shop
+            <a class="navbar-brand fw-bold fs-4 text-primary" href="{{ path('categorias') }}">
+                <span class="me-1">🛍️</span> Perfume <span class="text-dark">Shop</span>
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarContent" aria-controls="navbarContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                     <li class="nav-item">
-                        <a class="nav-link {% if app.request.attributes.get('_route') == 'home' %}active{% endif %}"
+                        <a class="nav-link fw-medium {% if app.request.attributes.get('_route') == 'home' %}active text-primary{% endif %}"
                            href="{{ path('home') }}">Inicio</a>
                     </li>
-
                     <li class="nav-item">
-                        <a class="nav-link {% if app.request.attributes.get('_route') == 'categorias' %}active{% endif %}"
-                           href="{{ path('categorias') }}">
-                            Categorías
-                        </a>
+                        <a class="nav-link fw-medium {% if app.request.attributes.get('_route') == 'categorias' %}active text-primary{% endif %}"
+                           href="{{ path('categorias') }}">Categorías</a>
                     </li>
                 </ul>
 
-                <ul class="navbar-nav ms-auto">
-
+                <div class="d-flex align-items-center">
                     {% if app.user %}
-                        <li class="nav-item d-flex align-items-center me-3 text-white">
-                            👋 Bienvenido, <strong class="ms-1">{{ app.user.login }}</strong>
-                        </li>
+                        <span class="navbar-text me-3 d-none d-lg-inline">
+                            Hola, <span class="fw-bold text-dark">{{ app.user.login }}</span>
+                        </span>
 
-                        {# Botón de Dashboard solo para administradores #}
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <li class="nav-item me-2">
-                                <a class="btn btn-danger btn-sm rounded-pill px-3 shadow-sm"
-                                   href="{{ path('admin') }}">
-                                    ⚙️ Dashboard Admin
+                        <div class="btn-group">
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a class="btn btn-outline-danger btn-sm px-3" href="{{ path('admin') }}">
+                                    ⚙️ Admin
                                 </a>
-                            </li>
-                        {% endif %}
+                            {% endif %}
 
-                        {# Botón Mis Pedidos (Solo visible si está logueado) #}
-                        <li class="nav-item me-2">
-                            <a class="btn btn-info btn-sm rounded-pill px-3 text-white
-                           {% if app.request.attributes.get('_route') == 'historial' %}active{% endif %}"
-                               href="{{ path('historial') }}">
-                                📦 Mis Pedidos
+                            <a class="btn btn-light btn-sm px-3 border" href="{{ path('historial') }}">
+                                📦 Pedidos
                             </a>
-                        </li>
 
-                        <li class="nav-item me-3">
-                            <a class="btn btn-warning btn-sm rounded-pill px-3
-                           {% if app.request.attributes.get('_route') == 'cesta' %}active{% endif %}"
-                               href="{{ path('cesta') }}">
+                            <a class="btn btn-primary btn-sm px-3 position-relative" href="{{ path('cesta') }}">
                                 🛒 Cesta
+                                {# Opcional: podrías añadir aquí un badge con el número de items #}
                             </a>
-                        </li>
 
-                        <li class="nav-item">
-                            <a class="btn btn-outline-light btn-sm rounded-pill px-3"
-                               href="{{ path('logout') }}">
-                                Cerrar sesión
+                            <a class="btn btn-dark btn-sm px-3" href="{{ path('logout') }}" title="Cerrar sesión">
+                                🚪
                             </a>
-                        </li>
+                        </div>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="btn btn-light btn-sm rounded-pill px-3"
-                               href="{{ path('login') }}">
-                                Iniciar sesión
-                            </a>
-                        </li>
+                        <a class="btn btn-primary rounded-pill px-4" href="{{ path('login') }}">
+                            Iniciar sesión
+                        </a>
                     {% endif %}
-                </ul>
+                </div>
             </div>
-
         </div>
     </nav>
 {% endblock %}
