@@ -7,6 +7,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class UsuarioCrudController extends AbstractCrudController
 {
@@ -30,6 +34,7 @@ class UsuarioCrudController extends AbstractCrudController
         return Usuario::class;
     }
     
+    /*
     #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
@@ -37,6 +42,8 @@ class UsuarioCrudController extends AbstractCrudController
             ->add('dni')
             ->add('email');
     }
+     * 
+     */
     
     /**
      * Métodos que posibilita el poder ecriptar las password del usuario al crear uno o actualizarlo en caso de que exista.
