@@ -34,6 +34,15 @@ class UsuarioCrudController extends AbstractCrudController
         return Usuario::class;
     }
     
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('id')
+            ->add('login')
+            ->add('email')
+        ;
+    }
+    
     /*
     #[\Override]
     public function configureFilters(Filters $filters): Filters
