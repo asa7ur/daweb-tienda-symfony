@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 
+#[IsGranted('ROLE_ADMIN')]
 class PedidoCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

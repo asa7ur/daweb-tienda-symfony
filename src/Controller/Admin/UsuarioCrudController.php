@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeEntityPersistedEvent;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
+#[IsGranted('ROLE_ADMIN')]
 class UsuarioCrudController extends AbstractCrudController
 {
     /**
