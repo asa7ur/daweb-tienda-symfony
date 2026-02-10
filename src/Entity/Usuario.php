@@ -32,6 +32,11 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+    
+    /**
+     * @var string
+     */
+    private $plainPassword;
 
     #[ORM\Column(length: 255)]
     private ?string $email = null;
@@ -184,4 +189,20 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    
+    /**
+     * @see UserInterface
+     */
+    #[\Override]
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+         $this->plainPassword = null;
+    }
+
+    public function getPlainPassword(){
+       $this->plainPassword = $this->getPassword();
+       return $this->plainPassword;
+    }
+
 }

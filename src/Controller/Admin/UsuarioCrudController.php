@@ -10,9 +10,69 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class UsuarioCrudController extends AbstractCrudController
 {
+    /**
+     * @var UserPasswordHasherInterface
+     */
+    private $userPasswordHasher;
+
+    /**
+     * Inicializamos el PasswordHasher
+     * @param UserPasswordHasherInterface $userPasswordHasher
+     */
+    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
+    {
+        $this->userPasswordHasher = $userPasswordHasher;
+    }
+    
+    #[\Override]
     public static function getEntityFqcn(): string
     {
         return Usuario::class;
+    }
+    
+    #[\Override]
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add('dni')
+            ->add('email');
+    }
+    
+    /**
+     * Métodos que posibilita el poder ecriptar las password del usuario al crear uno o actualizarlo en caso de que exista.
+     * @param EntityManagerInterface $entityManager
+     * @param $entity
+     * @return void
+     */
+
+    #[\Override]
+    public function updateEntity(EntityManagerInterface $entityManager, $entity): void
+    {
+        $event = new BeforeEntityPersistedEvent($entity);
+        $this->passwordHash($event);
+        parent::updateEntity($entityManager, $entity);
+    }
+
+    #[\Override]
+    public function persistEntity(EntityManagerInterface $entityManager, $entity): void
+    {
+        $event = new BeforeEntityPersistedEvent($entity);
+        $this->passwordHash($event);
+        parent::persistEntity($entityManager, $entity);
+    }
+    
+    /**
+     * Función que posibilita el poder encryptar las password de los usuarios.
+     * @param BeforeEntityPersistedEvent $event
+     * @return void
+     */
+    public function passwordHash(BeforeEntityPersistedEvent $event)
+    {
+        $entity = $event->getEntityInstance();
+        if(!$entity instanceof Usuario){
+            return;
+        }
+        $entity->setPassword($this->userPasswordHasher->hashPassword($entity,$entity->getPlainPassword()));
     }
 
     /*
