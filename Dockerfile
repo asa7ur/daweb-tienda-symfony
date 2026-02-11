@@ -4,6 +4,7 @@ FROM php:8.4-apache
 # Instalamos los paquetes necesarios
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     libpq-dev \
+    libicu-dev \
     git \ 
     curl \
     vim \
@@ -11,7 +12,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Configuramos los módulos de PHP
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql
+RUN docker-php-ext-configure intl
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql intl
 
 # Instalamos y habilitamos Xdebug
 RUN pecl install xdebug \
