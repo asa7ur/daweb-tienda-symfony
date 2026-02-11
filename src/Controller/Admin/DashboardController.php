@@ -11,6 +11,7 @@ use App\Entity\Categoria;
 use App\Entity\Producto;
 use App\Entity\Usuario;
 use App\Entity\Pedido;
+use App\Entity\PedidoProducto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 #[IsGranted('ROLE_ADMIN')]
@@ -57,5 +58,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Producto', 'fas fa-list', Producto::class);
         yield MenuItem::linkToCrud('Usuarios', 'fas fa-list', Usuario::class);
         yield MenuItem::linkToCrud('Pedidos', 'fas fa-list', Pedido::class);
+        yield MenuItem::linkToCrud('Productos en Pedido', 'fas fa-list', PedidoProducto::class);
     }
 }
