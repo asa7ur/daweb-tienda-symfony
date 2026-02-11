@@ -4,14 +4,17 @@ services:
     build: .
     container_name: symfony-web
     ports:
-      - "85:80"
+      - "80:80"
+      - "443:443"
+      - "9003:9003"
     volumes:
-      - ./:/var/www/html
+      - .:/var/www/html
+      - ../certs:/etc/letsencrypt:ro
     networks:
       - web_network
     restart: always
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    depends_on:
+      - db
   # Define el servicio de BD
   db:
     image: postgres:16-alpine
