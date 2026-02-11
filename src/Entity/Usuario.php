@@ -207,5 +207,10 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         $this->plainPassword = $plainPassword;
         return $this;
     }
+    
+    public function __toString(): string
+    {
+        return $this->login ?? 'Usuario sin nombre'; 
+    }
 
 }
