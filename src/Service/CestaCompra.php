@@ -97,5 +97,12 @@ class CestaCompra
     {
         $this->carga_cesta();
         return empty($this->productos);
-    } 
+    }
+    
+    public function vaciar(): void
+    {
+        $this->productos = [];
+        $this->unidades = [];
+        $this->guardar_cesta();
+    }
 }

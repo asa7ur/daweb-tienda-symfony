@@ -119,7 +119,8 @@ final class BaseController extends AbstractController
 
             try {
                 $em->flush();
-                $pedido_id = $pedido->getId(); 
+                $pedido_id = $pedido->getId();
+                $cesta->vaciar();
             } catch (\Exception $ex) {
                 $error = 2; 
             }
