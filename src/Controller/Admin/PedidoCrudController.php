@@ -19,6 +19,7 @@ class PedidoCrudController extends AbstractCrudController
         return Pedido::class;
     }
     
+    #[\Override]
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
@@ -29,6 +30,7 @@ class PedidoCrudController extends AbstractCrudController
     }
 
     
+    #[\Override]
     public function configureFields(string $pageName): iterable
     {
         return [
