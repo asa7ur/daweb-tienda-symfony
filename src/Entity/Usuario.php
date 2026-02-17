@@ -48,6 +48,7 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Pedido>
      */
     #[ORM\OneToMany(targetEntity: Pedido::class, mappedBy: 'usuario', orphanRemoval: true)]
+    #[ORM\OrderBy(["id" => "DESC"])]
     private Collection $pedidos;
 
     public function __construct()
